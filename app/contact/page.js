@@ -19,41 +19,22 @@ import {
   Users,
   Sparkles,
 } from "lucide-react";
-
-// EmailJS integration (dummy implementation)
-const emailjs = {
-  sendForm: (serviceId, templateId, form, publicKey) => {
-    return new Promise((resolve, reject) => {
-      // Simulate API call
-      setTimeout(() => {
-        if (Math.random() > 0.1) {
-          // 90% success rate
-          resolve({ status: 200, text: "Message sent successfully!" });
-        } else {
-          reject({ status: 400, text: "Failed to send message" });
-        }
-      }, 2000);
-    });
-  },
-};
+import emailjs from "@emailjs/browser";
 
 export default function Contact() {
-  const [form, setForm] = useState({
-    user_name: "",
-    user_email: "",
-    user_company: "",
+  const [formData, setFormData] = useState({
+    name: "",
+    email: "",
+    company: "",
     message: "",
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitStatus, setSubmitStatus] = useState(null);
-  const formRef = useRef();
 
-  const handleChange = (e) => {
-    setForm((currform) => ({
-      ...currform,
-      [e.target.name]: e.target.value,
-    }));
+  const handleInputChange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
   };
+
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -61,19 +42,18 @@ export default function Contact() {
     setSubmitStatus(null);
 
     try {
-      // EmailJS configuration (dummy values - replace with your actual EmailJS config)
-      await emailjs.sendForm(
-        "service_your_id", // Replace with your EmailJS service ID
-        "template_your_id", // Replace with your EmailJS template ID
-        formRef.current,
-        "your_public_key" // Replace with your EmailJS public key
+      await emailjs.send(
+        process.env.NEXT_PUBLIC_EMAILJS_SERVICE_ID,
+        process.env.NEXT_PUBLIC_EMAILJS_TEMPLATE_ID,
+        { ...formData },
+        process.env.NEXT_PUBLIC_EMAILJS_USER_ID
       );
 
       setSubmitStatus({
         type: "success",
         message: "Thank you! Your message has been sent successfully.",
       });
-      setForm({ user_name: "", user_email: "", user_company: "", message: "" });
+      setFormData({ name: "", email: "", company: "", message: "" });
     } catch (error) {
       setSubmitStatus({
         type: "error",
@@ -88,21 +68,21 @@ export default function Contact() {
     {
       icon: Mail,
       label: "Email",
-      value: "hello@learnova.com",
+      value: "shawprem217@gmail.com",
       href: "mailto:hello@learnova.com",
       gradient: "from-blue-500 to-cyan-500",
     },
     {
       icon: Phone,
       label: "Phone",
-      value: "+91 93102 438XX",
+      value: "+91 81004 839XX",
       href: "tel:+919310243800",
       gradient: "from-green-500 to-emerald-500",
     },
     {
       icon: MapPin,
       label: "Address",
-      value: "New Delhi, India",
+      value: "Bhopal, India",
       href: "#",
       gradient: "from-purple-500 to-pink-500",
     },
@@ -195,13 +175,12 @@ export default function Contact() {
                       Send us a Message
                     </h2>
                     <p className="text-gray-400">
-                      Fill out the form below and our team will get back to you
+                      Fill out the formData below and our team will get back to you
                       within 24 hours.
                     </p>
                   </div>
 
                   <form
-                    ref={formRef}
                     onSubmit={handleSubmit}
                     className="space-y-6"
                   >
@@ -212,9 +191,9 @@ export default function Contact() {
                         </label>
                         <input
                           type="text"
-                          name="user_name"
-                          value={form.user_name}
-                          onChange={handleChange}
+                          name="name"
+                          value={formData.name}
+                          onChange={handleInputChange}
                           placeholder="Enter your full name"
                           required
                           className="w-full p-4 bg-white/5 border border-white/10 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-accent focus:border-accent/50 transition-all duration-300"
@@ -227,9 +206,9 @@ export default function Contact() {
                         </label>
                         <input
                           type="email"
-                          name="user_email"
-                          value={form.user_email}
-                          onChange={handleChange}
+                          name="email"
+                          value={formData.email}
+                          onChange={handleInputChange}
                           placeholder="you@example.com"
                           required
                           className="w-full p-4 bg-white/5 border border-white/10 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-accent focus:border-accent/50 transition-all duration-300"
@@ -243,9 +222,9 @@ export default function Contact() {
                       </label>
                       <input
                         type="text"
-                        name="user_company"
-                        value={form.user_company}
-                        onChange={handleChange}
+                        name="company"
+                        value={formData.company}
+                        onChange={handleInputChange}
                         placeholder="Your institution or company name"
                         className="w-full p-4 bg-white/5 border border-white/10 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-accent focus:border-accent/50 transition-all duration-300"
                       />
@@ -257,8 +236,8 @@ export default function Contact() {
                       </label>
                       <textarea
                         name="message"
-                        value={form.message}
-                        onChange={handleChange}
+                        value={formData.message}
+                        onChange={handleInputChange}
                         rows="5"
                         placeholder="Tell us about your needs and how we can help..."
                         required
@@ -398,25 +377,6 @@ export default function Contact() {
                   </p>
                 </div>
 
-                {/* Quick Stats */}
-                <div className="bg-gradient-to-br from-accent/10 to-purple-500/10 backdrop-blur-xl rounded-3xl p-8 border border-accent/20">
-                  <h3 className="text-2xl font-bold text-white mb-6">
-                    Why Choose Learnova?
-                  </h3>
-
-                  <div className="grid grid-cols-2 gap-6">
-                    <div className="text-center">
-                      <Building className="w-8 h-8 text-accent mx-auto mb-2" />
-                      <div className="text-2xl font-bold text-white">500+</div>
-                      <div className="text-gray-400 text-sm">Institutions</div>
-                    </div>
-                    <div className="text-center">
-                      <Users className="w-8 h-8 text-accent mx-auto mb-2" />
-                      <div className="text-2xl font-bold text-white">100K+</div>
-                      <div className="text-gray-400 text-sm">Students</div>
-                    </div>
-                  </div>
-                </div>
               </div>
             </div>
           </div>

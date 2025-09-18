@@ -23,6 +23,7 @@ import {
   Crown,
   Zap,
   TrendingUp,
+  User2,
 } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
 import { Navbar } from "@/components/Navbar";
@@ -61,8 +62,8 @@ export default function ProfilePage() {
     fileInputRef.current?.click();
   };
 
+  // Fixed image handling function
   const getUserPhoto = () => {
-    // console.log(user?.photoURL);
     return user?.photoURL || null;
   };
 
@@ -74,6 +75,13 @@ export default function ProfilePage() {
       .join("")
       .toUpperCase()
       .slice(0, 2);
+  };
+
+  // Get user display name safely
+  const getUserDisplayName = () => {
+    if (user?.displayName) return user.displayName;
+    if (user?.email) return user.email.split("@")[0];
+    return "User";
   };
 
   // Mock data for achievements and activity
@@ -160,10 +168,29 @@ export default function ProfilePage() {
     { id: "settings", label: "Settings", icon: Edit3 },
   ];
 
+  // Show loading or login prompt if no user
+  if (!user) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-slate-950 via-gray-900 to-slate-950 flex items-center justify-center">
+        <Navbar />
+        <div className="text-center text-white pt-20">
+          <div className="w-16 h-16 bg-gradient-to-r from-accent to-purple-500 rounded-full flex items-center justify-center mx-auto mb-4">
+            <User className="w-8 h-8" />
+          </div>
+          <h2 className="text-2xl font-bold mb-2">Please Log In</h2>
+          <p className="text-gray-400">
+            You need to be logged in to view your profile.
+          </p>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-950 via-gray-900 to-slate-950 pt-20">
+      <Navbar />
+
       {/* Background Effects */}
-        <Navbar/>
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(59,130,246,0.1),transparent_70%)]" />
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_80%_20%,rgba(168,85,247,0.15),transparent_50%)]" />
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_80%,rgba(34,197,94,0.1),transparent_50%)]" />
@@ -179,19 +206,31 @@ export default function ProfilePage() {
             {/* Profile Image */}
             <div className="relative group">
               <div className="absolute inset-0 bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 rounded-full blur-lg opacity-0 group-hover:opacity-60 transition-all duration-300" />
+
+              {/* Fixed image rendering */}
               {getUserPhoto() ? (
                 <img
-                  src={user?.photoURL}
+                  src={getUserPhoto()}
                   alt="Profile"
                   className="relative w-32 h-32 rounded-full border-4 border-white/20 object-cover shadow-2xl group-hover:scale-105 transition-all duration-300"
+                  onError={(e) => {
+                    // Hide image and show initials fallback on error
+                    e.target.style.display = "none";
+                    e.target.nextElementSibling.style.display = "flex";
+                  }}
                 />
-              ) : (
-                <div className="relative w-32 h-32 rounded-full bg-gradient-to-br from-blue-500 via-purple-500 to-pink-500 flex items-center justify-center border-4 border-white/20 shadow-2xl group-hover:scale-105 transition-all duration-300">
-                  <span className="text-3xl font-bold text-white">
-                    {getUserInitials(formData.displayName)}
-                  </span>
-                </div>
-              )}
+              ) : null}
+
+              {/* Fallback initials avatar */}
+              <div
+                className={`relative w-32 h-32 rounded-full bg-gradient-to-br from-blue-500 via-purple-500 to-pink-500 flex items-center justify-center border-4 border-white/20 shadow-2xl group-hover:scale-105 transition-all duration-300 ${
+                  getUserPhoto() ? "hidden" : "flex"
+                }`}
+              >
+                <span className="text-3xl font-bold text-white">
+                  {getUserInitials(getUserDisplayName())}
+                </span>
+              </div>
 
               {/* Premium Badge */}
               <div className="absolute -top-2 -right-2 bg-gradient-to-r from-yellow-400 to-orange-500 rounded-full p-2 border-2 border-black shadow-lg">
@@ -227,7 +266,7 @@ export default function ProfilePage() {
                     />
                   ) : (
                     <h1 className="text-3xl font-bold text-white mb-2 flex items-center">
-                      {formData.displayName}
+                      {getUserDisplayName()}
                       <Sparkles className="ml-3 h-6 w-6 text-yellow-400 animate-pulse" />
                     </h1>
                   )}
@@ -301,7 +340,7 @@ export default function ProfilePage() {
                   {
                     icon: Mail,
                     label: "Email",
-                    value: formData.email,
+                    value: user?.email || formData.email,
                     name: "email",
                   },
                   {
@@ -386,12 +425,12 @@ export default function ProfilePage() {
         <div className="bg-black/20 backdrop-blur-2xl rounded-3xl border border-white/10 overflow-hidden">
           {/* Tab Navigation */}
           <div className="border-b border-white/10">
-            <nav className="flex space-x-8 px-8 py-4">
+            <nav className="flex space-x-8 px-8 py-4 overflow-x-auto">
               {tabs.map((tab) => (
                 <button
                   key={tab.id}
                   onClick={() => setActiveTab(tab.id)}
-                  className={`flex items-center space-x-2 py-3 px-4 border-b-2 transition-all duration-300 ${
+                  className={`flex items-center space-x-2 py-3 px-4 border-b-2 transition-all duration-300 whitespace-nowrap ${
                     activeTab === tab.id
                       ? "border-blue-400 text-blue-400"
                       : "border-transparent text-white/60 hover:text-white hover:border-white/20"

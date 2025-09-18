@@ -579,7 +579,7 @@ export default function ActivityPage() {
           <div className="max-w-4xl mx-auto">
             <div className="bg-gradient-to-br from-black/50 to-purple-900/30 rounded-3xl p-12 border border-accent/30 backdrop-blur-xl hover:border-accent/50 transition-all duration-700">
               <Trophy className="w-16 h-16 text-accent mx-auto mb-6" />
-              <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
+              <h2 className="text-3xl md:text-4xl font-bold text-white mb-4 text-center">
                 Ready to Level Up Your Learning?
               </h2>
               <p className="text-xl text-gray-300 mb-8 max-w-2xl mx-auto">

@@ -14,6 +14,8 @@ import {
   Target,
   Heart,
   Lightbulb,
+  User,
+  Building2,
   GraduationCap,
   Sparkles,
   ChevronDown,
@@ -24,6 +26,7 @@ import {
   Award,
 } from "lucide-react";
 import { useEffect, useState } from "react";
+import Link from "next/link";
 
 export default function AboutPage() {
   const [scrollY, setScrollY] = useState(0);
@@ -57,38 +60,64 @@ export default function AboutPage() {
   ];
 
   const statsData = [
-    { number: "500+", label: "Institutions", icon: BookOpen },
-    { number: "100K+", label: "Students Tracked", icon: Users },
-    { number: "60%", label: "Time Saved", icon: TrendingUp },
+    { number: "Upcoming", label: "Institution Partnerships", icon: BookOpen },
+    { number: "Upcoming", label: "Student Tracking", icon: Users },
+    { number: "70%", label: "Time Saved", icon: TrendingUp },
     { number: "98%", label: "Accuracy Rate", icon: Award },
   ];
 
+
   const teamMembers = [
     {
-      name: "Alex Smith",
-      role: "CEO & Founder",
-      initials: "AS",
+      name: "Prem Shaw",
+      role: "Team Leader & Full-Stack Developer",
+      initials: "PS",
       description:
-        "Former school administrator with 15 years of experience in educational technology and institutional management systems.",
+        "Guides the team, manages development & deployment, and builds the Learnova platform end-to-end to ensure a seamless and impactful experience.",
       color: "from-purple-500 to-pink-500",
     },
     {
-      name: "Maria Johnson",
-      role: "Head of Product",
-      initials: "MJ",
+      name: "Prashant Bhati",
+      role: "Web Developer",
+      initials: "PB",
       description:
-        "Curriculum specialist and former teacher who understands the daily challenges of educational administration and student tracking.",
+        "Maintains Learnova’s web applications with a strong focus on performance and usability.",
       color: "from-blue-500 to-cyan-500",
     },
     {
-      name: "David Lee",
-      role: "CTO",
-      initials: "DL",
+      name: "Polawar Pranav Shirish",
+      role: "Frontend Developer",
+      initials: "PP",
       description:
-        "Technology leader specializing in educational software architecture and scalable institutional management platforms.",
+        "Designs intuitive and interactive user interfaces to deliver an engaging and accessible student experience.",
       color: "from-emerald-500 to-teal-500",
     },
+    {
+      name: "Abir Ghosh",
+      role: "Machine Learning Specialist",
+      initials: "AG",
+      description:
+        "Develops ML models and data-driven insights to personalize learning and optimize institutional performance.",
+      color: "from-rose-500 to-pink-500",
+    },
+    {
+      name: "Anuj Ram Shrivastava",
+      role: "ML & Backend Developer",
+      initials: "AR",
+      description:
+        "Works on backend systems and ML algorithms that power smart recommendations and advanced analytics in Learnova.",
+      color: "from-indigo-500 to-violet-500",
+    },
+    {
+      name: "Chandana S",
+      role: "Testing & Documentation",
+      initials: "CS",
+      description:
+        "Ensures reliability through rigorous testing and comprehensive documentation for the platform.",
+      color: "from-amber-500 to-orange-500",
+    },
   ];
+
 
   return (
     <>
@@ -188,7 +217,7 @@ export default function AboutPage() {
                 <span className="text-purple-400 font-semibold">
                   attendance management
                 </span>
-                . Trusted by 500+ educational institutions worldwide.
+                , designed for smooth academic management.
               </p>
             </div>
           </div>
@@ -212,22 +241,24 @@ export default function AboutPage() {
 
                 <div className="space-y-6">
                   <p className="text-lg text-gray-300 leading-relaxed">
-                    At Learnova, we believe that{" "}
+                    At Learnova, our mission is to harness the power of{" "}
                     <span className="text-accent font-semibold">
-                      effective educational administration
+                      technology
                     </span>{" "}
-                    is the foundation of student success. Our platform
-                    streamlines curriculum planning and attendance tracking,
-                    giving educators more time to focus on what truly matters.
+                    to make education more efficient, engaging, and equitable.
+                    We address the inefficiencies of traditional systems—manual
+                    attendance, siloed data, and limited student interaction—by
+                    delivering{" "}
+                    <span className="text-purple-400 font-semibold">
+                      integrated, intuitive solutions
+                    </span>
+                    .
                   </p>
 
                   <p className="text-lg text-gray-400 leading-relaxed">
-                    We're committed to providing educational institutions with
-                    intelligent tools that enable{" "}
-                    <span className="text-purple-400 font-semibold">
-                      data-driven decisions
-                    </span>{" "}
-                    and create better learning outcomes for all students.
+                    With Learnova, teachers can teach without distractions,
+                    students can learn with purpose, and institutions can create
+                    environments where every learner thrives.
                   </p>
                 </div>
 
@@ -283,8 +314,8 @@ export default function AboutPage() {
                 Core Principles That Drive Us
               </h2>
               <p className="text-xl text-gray-400 max-w-3xl mx-auto">
-                These values shape every decision we make and every solution we
-                create for educational institutions worldwide.
+                Our core values reflect what makes Learnova authentic and
+                trustworthy for schools, teachers, parents, and students.
               </p>
             </div>
 
@@ -294,21 +325,21 @@ export default function AboutPage() {
                   icon: Target,
                   title: "Efficiency",
                   description:
-                    "Streamlining administrative processes to reduce workload and eliminate redundancy, allowing educators to focus on teaching excellence.",
+                    "We streamline workflows and reduce redundancy, giving educators more time to focus on teaching.",
                   gradient: "from-blue-500 to-cyan-500",
                 },
                 {
                   icon: Heart,
-                  title: "Student-Centered",
+                  title: "Engagement",
                   description:
-                    "Every feature designed with student success in mind, providing insights that help institutions support their learners better.",
+                    "Interactive and gamified experiences that motivate students and make learning enjoyable.",
                   gradient: "from-pink-500 to-rose-500",
                 },
                 {
                   icon: Lightbulb,
-                  title: "Innovation",
+                  title: "Accessibility",
                   description:
-                    "Leveraging cutting-edge AI and technology to create intelligent solutions that adapt to modern education needs.",
+                    "Designed for all schools, even in low-network areas, with affordable and easy-to-use solutions.",
                   gradient: "from-purple-500 to-violet-500",
                 },
               ].map((value, index) => (
@@ -426,19 +457,83 @@ export default function AboutPage() {
             <div className="grid md:grid-cols-4 gap-8">
               {statsData.map((stat, index) => (
                 <div key={index} className="group text-center">
-                  <div className="bg-white/10 backdrop-blur-xl rounded-3xl p-8 border border-white/20 hover:border-white/40 transition-all duration-700 hover:scale-[1.02] hover:shadow-2xl">
+                  <div className="bg-white/10 backdrop-blur-xl rounded-3xl p-8 border border-white/20 hover:border-accent/40 transition-all duration-700 hover:scale-[1.02] hover:shadow-2xl">
+                    {/* Icon */}
                     <div className="mb-6">
-                      <stat.icon className="w-12 h-12 text-white mx-auto group-hover:scale-105 transition-transform duration-500" />
+                      <stat.icon className="w-12 h-12 text-accent mx-auto group-hover:scale-110 transition-transform duration-500" />
                     </div>
 
-                    <div className="text-5xl md:text-6xl font-bold text-white mb-3 group-hover:text-accent transition-colors duration-500">
+                    {/* Number / Word */}
+                    <div className="text-4xl md:text-5xl font-bold text-white mb-3 group-hover:text-accent transition-colors duration-500">
                       {stat.number}
                     </div>
 
-                    <p className="text-white/90 font-medium text-lg group-hover:text-white transition-colors duration-500">
+                    {/* Label */}
+                    <p className="text-white/80 font-medium text-lg group-hover:text-white transition-colors duration-500">
                       {stat.label}
                     </p>
                   </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* Impact Section */}
+        <section className="py-20 px-4 sm:px-6 lg:px-8 relative">
+          <div className="max-w-7xl mx-auto relative">
+            <div className="text-center mb-16">
+              <div className="inline-flex items-center px-4 py-2 bg-gradient-to-r from-accent/20 to-purple-500/20 rounded-full border border-accent/30 backdrop-blur-sm mb-6">
+                <Sparkles className="w-5 h-5 text-accent mr-2" />
+                <span className="text-accent font-medium">Our Impact</span>
+              </div>
+              <h2 className="text-4xl md:text-5xl font-bold text-white mb-6">
+                Transforming Education for Everyone
+              </h2>
+              <p className="text-xl text-gray-400 max-w-3xl mx-auto">
+                Learnova empowers teachers, students, institutions, and parents
+                with meaningful outcomes.
+              </p>
+            </div>
+
+            <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+              {[
+                {
+                  icon: User,
+                  title: "Teachers",
+                  description:
+                    "Regain ~1 hour/day, enabling more focus on teaching and mentoring.",
+                },
+                {
+                  icon: GraduationCap,
+                  title: "Students",
+                  description:
+                    "Convert ~90+ hours/year from idle time into productive learning.",
+                },
+                {
+                  icon: Building2,
+                  title: "Institutions",
+                  description:
+                    "Improve attendance and engagement metrics, enhancing overall efficiency.",
+                },
+                {
+                  icon: Users,
+                  title: "Parents",
+                  description:
+                    "Gain transparent insights into their child’s attendance and activities, fostering trust.",
+                },
+              ].map((impact, index) => (
+                <div
+                  key={index}
+                  className="group bg-white/10 backdrop-blur-xl rounded-3xl p-8 border border-white/20 hover:border-accent/40 transition-all duration-700 hover:scale-[1.02] hover:shadow-2xl hover:shadow-accent/25 text-center"
+                >
+                  <impact.icon className="w-12 h-12 text-accent mx-auto mb-6 group-hover:scale-110 transition-transform duration-500" />
+                  <h3 className="text-xl font-semibold text-white mb-3 group-hover:text-accent transition-colors duration-500">
+                    {impact.title}
+                  </h3>
+                  <p className="text-gray-300 leading-relaxed text-sm group-hover:text-gray-200 transition-colors duration-500">
+                    {impact.description}
+                  </p>
                 </div>
               ))}
             </div>
@@ -459,14 +554,17 @@ export default function AboutPage() {
               </p>
 
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                <Link href={"/auth"}>
                 <button className="group inline-flex items-center px-8 py-4 bg-gradient-to-r from-accent to-purple-500 rounded-full text-white font-semibold hover:shadow-xl hover:shadow-accent/25 transition-all duration-500 hover:scale-[1.02]">
                   Get Started Today
                   <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform duration-300" />
                 </button>
-
+                </Link>
+                <Link href={"/contact"}>
                 <button className="inline-flex items-center px-8 py-4 bg-white/10 rounded-full text-white font-semibold border border-white/20 hover:bg-white/20 transition-all duration-500 hover:scale-[1.02]">
                   Schedule Demo
                 </button>
+                </Link>
               </div>
             </div>
           </div>
