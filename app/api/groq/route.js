@@ -1,34 +1,19 @@
 import { jsonError, jsonSuccess } from "@/lib/api-response";
 import { verifyFirebaseToken } from "@/lib/firebase-admin";
+import { checkRateLimit } from "@/lib/rateLimit";
+import { detectInjection, sanitizeMessage, buildSecureMessages } from "@/utils/promptGuard";
 
 const GROQ_API_URL = "https://api.groq.com/openai/v1/chat/completions";
 const MAX_MESSAGE_LENGTH = 2000;
 
-// Rate limiting setup
-const RATE_LIMIT_WINDOW = 60 * 1000; // 1 minute
-const MAX_REQUESTS_PER_WINDOW = 10; // max 10 requests per minute
-const rateLimitMap = new Map();
-
-const isRateLimited = (userId) => {
-  const now = Date.now();
-  if (!rateLimitMap.has(userId)) {
-    rateLimitMap.set(userId, [now]);
-    return false;
-  }
-
-  const timestamps = rateLimitMap.get(userId);
-  const validTimestamps = timestamps.filter((t) => now - t < RATE_LIMIT_WINDOW);
-
-  if (validTimestamps.length >= MAX_REQUESTS_PER_WINDOW) {
-    rateLimitMap.set(userId, validTimestamps);
-    return true;
-  }
-
-  validTimestamps.push(now);
-  rateLimitMap.set(userId, validTimestamps);
-  return false;
-};
-
+/**
+ * Handles incoming chat completions requests using the Groq AI SDK.
+ * Secured via Firebase Bearer Token authentication to prevent API resource abuse,
+ * billing spikes, and unauthorized client consumption. Includes per-user rate limiting.
+ * 
+ * @param {Request} request - The incoming HTTP POST request.
+ * @returns {Promise<Response>} JSON response containing completion results or an error payload.
+ */
 export async function POST(request) {
   try {
     const authorization = request.headers.get("authorization");
@@ -40,8 +25,9 @@ export async function POST(request) {
       return jsonError("Unauthorized", 401);
     }
 
-    // Rate limiting per authenticated user
-    if (isRateLimited(decodedToken.uid)) {
+    // Rate limiting per authenticated user (persisted across cold starts)
+    const rateLimit = await checkRateLimit(decodedToken.uid);
+    if (!rateLimit.allowed) {
       return jsonError("Too many requests. Please try again later.", 429);
     }
 
@@ -60,6 +46,17 @@ export async function POST(request) {
       return jsonError("Message is too long", 400);
     }
 
+    const { isInjection, matchedPattern } = detectInjection(trimmedMessage);
+    if (isInjection) {
+      console.warn(`[nova-prompt-guard] Injection attempt detected from UID: ${decodedToken.uid}, pattern: ${matchedPattern}`);
+      return jsonError("Your message contains content that violates usage policies. Please rephrase your question.", 400);
+    }
+
+    const cleanMessage = sanitizeMessage(trimmedMessage);
+    if (!cleanMessage) {
+      return jsonError("Message is required", 400);
+    }
+
     const apiKey = process.env.GROQ_API_KEY;
     if (!apiKey) {
       return jsonError("Groq API key is not configured", 500);
@@ -68,6 +65,8 @@ export async function POST(request) {
     const timeoutMs = parseInt(process.env.GROQ_TIMEOUT || "30000", 10) || 30000;
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
+
+    const messages = buildSecureMessages(cleanMessage, SYSTEM_PROMPT);
 
     let response;
     try {
@@ -80,14 +79,7 @@ export async function POST(request) {
         signal: controller.signal,
         body: JSON.stringify({
           model: "llama-3.1-8b-instant",
-          messages: [
-            {
-              role: "system",
-              content:
-                "You are Nova, the friendly AI assistant for Learnova - a Smart Student Engagement Ecosystem. You help with questions about attendance automation, smart activities, security features, analytics, and educational technology. Always be helpful, informative, and encouraging. Keep responses concise but comprehensive.",
-            },
-            { role: "user", content: trimmedMessage },
-          ],
+          messages,
           max_tokens: 400,
           temperature: 0.7,
         }),
