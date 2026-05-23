@@ -97,6 +97,11 @@ export default function FaceRecognizer({
             }
           );
 
+        if (!isMounted.current) {
+          stream.getTracks().forEach((t) => t.stop());
+          return;
+        }
+
         retryStreamRef.current =
           stream;
 
@@ -186,6 +191,11 @@ export default function FaceRecognizer({
                 video: {},
               }
             );
+
+          if (!isMounted.current) {
+            stream.getTracks().forEach((t) => t.stop());
+            return;
+          }
 
           if (
             videoRef.current
