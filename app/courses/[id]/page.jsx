@@ -1,8 +1,7 @@
 "use client";
 
 import React, { useState, useEffect, useRef } from "react";
-import { useParams, useRouter } from "next/navigation";
-import React, { useState, useEffect } from "react";
+import { useParams, useRouter, notFound } from "next/navigation";
 import { motion } from "framer-motion";
 import { 
   BookOpen, 
@@ -18,8 +17,7 @@ import StudyDeck from "@/components/flashcards/StudyDeck";
 import Breadcrumb from "@/components/ui/Breadcrumb";
 import ReadingTimeBadge from "@/components/ui/ReadingTimeBadge";
 import toast from "react-hot-toast";
-import { useParams, useRouter, notFound } from "next/navigation"; // 🌟 Added notFound here
-import { routeParamSchema } from "@/lib/validations/auth"; // 🌟 Added your validation schema
+import { routeParamSchema } from "@/lib/validations/auth";
 import MarkdownRenderer from "@/components/ui/MarkdownRenderer";
 
 export default function CourseDetailPage() {
@@ -29,7 +27,7 @@ export default function CourseDetailPage() {
   const validationCheck = routeParamSchema.safeParse({ id: params.id });
   
   if (!validationCheck.success) {
-    return notFound(); // Gracesfully triggers Next.js 404 handler interface instead of crashing client UI
+    notFound();
   }
 
   const [mounted, setMounted] = useState(false);
@@ -186,10 +184,10 @@ export default function CourseDetailPage() {
             {course.title}
           </h1>
           {/* 2. Outer Layout Splitter Wrapper */}
-          <div className={`flex flex-col ${isPodActive ? "lg:flex-row gap-6 items-start" : "w-full"}`}></div>
+          <div className={`flex flex-col ${isPodActive ? "lg:flex-row gap-6 items-start" : "w-full"}`}>
             
             {/* 3. Left Side Content Area */}
-            <div className={`transition-all duration-300 ${isPodActive ? "w-full lg:flex-1" : "w-full"}`}></div>
+            <div className={`transition-all duration-300 ${isPodActive ? "w-full lg:flex-1" : "w-full"}`}>
           {/* 🌟 AI INTERACTIVE TIMELINE INTERFACE 🌟 */}
           <div className="my-8 p-6 rounded-2xl border border-zinc-800 bg-zinc-900/30 shadow-xl">
             {/* The Video Stream */}
@@ -335,6 +333,7 @@ export default function CourseDetailPage() {
               ))}
             </div>
           </section>
+            </div>
             {/* 5. Right Side Collaborative Live Workspace Panel */}
             {isPodActive && (
               <div className="w-full lg:w-[400px] lg:sticky lg:top-24 border border-zinc-800 bg-zinc-900/60 rounded-2xl overflow-hidden h-[calc(100vh-140px)] flex flex-col backdrop-blur-md shadow-2xl z-20 p-4">
@@ -360,7 +359,7 @@ export default function CourseDetailPage() {
                 />
               </div>
             )}
-        </motion.div>
+          </div>
 
           {/* Study / Flashcards */}
           <section className="mb-8">
